@@ -15,8 +15,11 @@ def suppress_stdout():
 
 # Ensure necessary NLTK data is downloaded
 with suppress_stdout():
-    nltk.download('punkt')
-    nltk.download('stopwords')
+    try:
+        nltk.download('punkt')
+        nltk.download('stopwords')
+    except Exception as e:
+        st.error(f"Error downloading NLTK data: {e}")
 
 # Define functions for additional readability metrics
 def new_dale_chall(text):
