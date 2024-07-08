@@ -6,9 +6,17 @@ from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import textstat
+import io
+import contextlib
+
+# Function to suppress output
+def suppress_stdout():
+    return contextlib.redirect_stdout(io.StringIO())
 
 # Ensure necessary NLTK data is downloaded
-nltk.download('punkt')
+with suppress_stdout():
+    nltk.download('punkt')
+    nltk.download('stopwords')
 
 # Define functions for additional readability metrics
 def new_dale_chall(text):
