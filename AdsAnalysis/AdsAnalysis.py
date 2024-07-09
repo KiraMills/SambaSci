@@ -11,7 +11,7 @@ import os
 from git import Repo
 
 # Define the path to the NLTK data repository
-nltk_data_repo_url = 'https://github.com/your-username/nltk_data_repo'
+nltk_data_repo_url = 'https://github.com/KiraMills/SambaSci/AdsAnalysis/nltk_data_repo'
 nltk_data_local_path = os.path.join(os.path.dirname(__file__), 'nltk_data')
 
 # Clone the NLTK data repository if it doesn't exist
@@ -41,17 +41,14 @@ text_input = st.text_area('Or paste text here for analysis')
 if uploaded_file is not None or text_input:
     if uploaded_file is not None:
         # Read the CSV file
-        df = pd.read_csv(uploaded_file)
+        df = pd.read_csv(uploaded_file, header=None, names=['text'])
         
         # Show preview of the CSV file
         st.write('Preview of the CSV file:')
         st.write(df.head())
         
-        # Select column to process
-        column = st.selectbox('Select column to process', df.columns)
-        
-        # Extract text data from the selected column
-        text_data_list = df[column].astype(str).tolist()
+        # Extract text data from the CSV file
+        text_data_list = df['text'].astype(str).tolist()
     else:
         # Use the pasted text for analysis
         text_data_list = [text_input]
