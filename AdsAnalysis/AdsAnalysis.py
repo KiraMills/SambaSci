@@ -188,3 +188,35 @@ if uploaded_file is not None or text_input:
         # Display the results
         st.write('Analysis Results:')
         st.dataframe(results)
+
+# Provide explanations
+        st.write('### Explanations:')
+        st.write('**Flesch-Kincaid Score:** A readability test designed to indicate how difficult a passage in English is to understand. The score is typically between 0 and 12, with higher scores indicating more difficult text. A score of 8-10 is considered fairly difficult, while a score of 12 is very difficult.')
+        st.write('**New Dale-Chall:** A readability formula that considers word difficulty and sentence length to assess text difficulty.')
+        st.write('**SMOG Index:** A readability formula that estimates the years of education needed to understand a piece of writing. The SMOG index specifically looks for polysyllabic words (words with three or more syllables) and requires a minimum number of sentences to generate a valid score. If the text is too short or lacks sufficient polysyllabic words, the SMOG index may return a score of 0.0. This indicates that the text is either very simple or does not meet the criteria for the SMOG formula to produce a meaningful score.')
+        st.write('**Lexical Diversity:** A measure of how many different words are used in the text. It is calculated as the ratio of unique words to the total number of words. A higher ratio indicates a more diverse vocabulary.')
+        st.write('**Top Words:** The most frequently occurring words in the text. This helps identify common themes or topics.')
+        st.write('**Sentiment Analysis:** An assessment of the emotional tone of the text. The sentiment score ranges from -1 (very negative) to 1 (very positive). A score close to 0 indicates neutral sentiment.')
+        st.write('**Top CTA Words:** The most frequently occurring call-to-action words in the text. These words are often used to encourage readers to take specific actions.')
+        st.write('**Sales-y Words Count:** The number of words in the text that are typically associated with sales language. A higher count indicates a more promotional tone.')
+        st.write('**News-y Words Count:** The number of words in the text that are typically associated with news language. A higher count indicates a more informational tone.')
+        
+        # Display charts for better visualization
+        st.write('### Charts:')
+        st.bar_chart(results[['Flesch-Kincaid Score', 'New Dale-Chall', 'SMOG Index', 'Lexical Diversity', 'Sales-y Words Count', 'News-y Words Count']])
+        
+        # Additional visualizations
+        st.write('### Sentiment Distribution:')
+        sentiment_df = pd.DataFrame(results[['Neg Sentiment', 'Neu Sentiment', 'Pos Sentiment', 'Compound Sentiment']])
+        st.bar_chart(sentiment_df)
+        
+        st.write('### Top Words Word Cloud:')
+        wordcloud_data = {word: total_cta_counts[word] for word in cta_words if total_cta_counts[word] > 0}
+        if wordcloud_data:
+            wordcloud = WordCloud(width=800, height=400, background_color='white').generate_from_frequencies(wordcloud_data)
+            plt.figure(figsize=(10, 5))
+            plt.imshow(wordcloud, interpolation='bilinear')
+            plt.axis('off')
+            st.pyplot(plt)
+        else:
+            st.write("No CTA words found in the text data to generate a word cloud.")
