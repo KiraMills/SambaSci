@@ -1,25 +1,25 @@
 import streamlit as st
 import pandas as pd
 import nltk
+from nltk.data import find
 from nltk.probability import FreqDist
 from wordcloud import WordCloud
 import matplotlib.pyplot as plt
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import textstat
-import io
-import contextlib
+import os
+from git import Repo
 
-# Function to suppress output
-def suppress_stdout():
-    return contextlib.redirect_stdout(io.StringIO())
+# Define the path to the NLTK data repository
+nltk_data_repo_url = 'https://github.com/your-username/nltk_data_repo'
+nltk_data_local_path = os.path.join(os.path.dirname(__file__), 'nltk_data')
 
-# Ensure necessary NLTK data is downloaded
-with suppress_stdout():
-    try:
-        nltk.download('punkt')
-        nltk.download('stopwords')
-    except Exception as e:
-        st.error(f"Error downloading NLTK data: {e}")
+# Clone the NLTK data repository if it doesn't exist
+if not os.path.exists(nltk_data_local_path):
+    Repo.clone_from(nltk_data_repo_url, nltk_data_local_path)
+
+# Set the NLTK data path
+nltk.data.path.append(nltk_data_local_path)
 
 # Define functions for additional readability metrics
 def new_dale_chall(text):
@@ -97,6 +97,7 @@ if uploaded_file is not None or text_input:
         total_compound_sentiment = 0
         total_salesy_count = 0
         total_newsy_count = 0
+        total_cta_counts = {word: 0 for word in cta_words}
         
         # Process each text data
         for text_data in text_data_list:
@@ -142,6 +143,8 @@ if uploaded_file is not None or text_input:
             
             # Top-performing CTA words
             cta_word_counts = {word: words.count(word) for word in cta_words}
+            for word, count in cta_word_counts.items():
+                total_cta_counts[word] += count
             
             # "Sales-y" vs "News-y" words
             salesy_count = sum(words.count(word) for word in salesy_words)
